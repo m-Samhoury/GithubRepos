@@ -13,6 +13,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField "String", "BASE_API_URL", "\"$BASE_API_URL\""
     }
     buildTypes {
         release {
@@ -40,5 +41,13 @@ dependencies {
 
 
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
+
+
+    // Koin for Android
+    implementation 'org.koin:koin-android:2.0.0-rc-2'
+    // or Koin for Lifecycle scoping
+    implementation 'org.koin:koin-androidx-scope:2.0.0-rc-2'
+    // or Koin for Android Architecture ViewModel
+    implementation 'org.koin:koin-androidx-viewmodel:2.0.0-rc-2'
 
 }
