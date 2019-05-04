@@ -10,4 +10,5 @@ package com.moustafasamhoury.githubchallenge.repository.network
 interface RetrofitGithubService {
 
 
+
 }

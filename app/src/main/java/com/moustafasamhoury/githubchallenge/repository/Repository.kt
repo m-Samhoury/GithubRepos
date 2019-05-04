@@ -11,5 +11,7 @@ import com.moustafasamhoury.githubchallenge.repository.network.RetrofitGithubSer
  */
 class Repository(val service: RetrofitGithubService) {
 
+
+
 }
  
