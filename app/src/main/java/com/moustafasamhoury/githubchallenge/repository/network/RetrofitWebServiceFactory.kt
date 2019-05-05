@@ -1,10 +1,16 @@
 package com.moustafasamhoury.githubchallenge.repository.network
 
 import android.content.Context
+import com.moustafasamhoury.githubchallenge.models.GithubErrorResponse
+import com.moustafasamhoury.githubchallenge.models.GithubRepo
+import com.moustafasamhoury.githubchallenge.utils.RxCallAdapterWrapperFactory
+import com.squareup.moshi.Moshi
 import okhttp3.Cache
 import okhttp3.CertificatePinner
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 
 /**
@@ -30,6 +36,15 @@ object RetrofitWebServiceFactory {
             .cache(Cache(context.cacheDir, 10 * 1024 * 1024))
             .retryOnConnectionFailure(false)
 
+
+    fun createMoshiInstance() = Moshi.Builder()
+        .build()
+        .apply {
+            adapter(GithubRepo::class.java)
+            adapter(GithubErrorResponse::class.java)
+        }
+
+
     inline fun <reified T> makeServiceFactory(
         okHttpClient: OkHttpClient,
         baseUrl: String
@@ -38,6 +53,9 @@ object RetrofitWebServiceFactory {
         val retrofit = Retrofit.Builder()
             .baseUrl(baseUrl)
             .client(okHttpClient)
+            .addCallAdapterFactory(RxCallAdapterWrapperFactory.create())
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .addConverterFactory(MoshiConverterFactory.create(createMoshiInstance()))
             .build()
         return retrofit.create(T::class.java)
 
