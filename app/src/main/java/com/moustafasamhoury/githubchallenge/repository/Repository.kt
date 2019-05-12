@@ -1,9 +1,11 @@
 package com.moustafasamhoury.githubchallenge.repository
 
+import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagedList
 import androidx.paging.toObservable
 import com.moustafasamhoury.githubchallenge.models.GithubRepo
 import com.moustafasamhoury.githubchallenge.repository.network.GithubRepoDataSourceFactory
+import com.moustafasamhoury.githubchallenge.repository.network.NetworkState
 import com.moustafasamhoury.githubchallenge.repository.network.RetrofitGithubService
 import io.reactivex.Observable
 
@@ -18,11 +20,12 @@ class Repository(private val service: RetrofitGithubService) {
 
 
     fun fetchTopGithubRepositoriesPaginated(
-        createdAfterDate: String
+        createdAfterDate: String,
+        errorsLiveData: MutableLiveData<NetworkState>
     ): Observable<PagedList<GithubRepo>> {
 
         val sourceFactory =
-            GithubRepoDataSourceFactory.create(service, createdAfterDate)
+            GithubRepoDataSourceFactory.create(service, createdAfterDate, errorsLiveData)
         val sourceFactoryObservable = sourceFactory.toObservable(
             config = PagedList.Config.Builder()
                 .setEnablePlaceholders(true)

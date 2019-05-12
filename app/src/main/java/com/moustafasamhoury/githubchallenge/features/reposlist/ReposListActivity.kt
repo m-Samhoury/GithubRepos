@@ -1,5 +1,6 @@
 package com.moustafasamhoury.githubchallenge.features.reposlist
 
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.moustafasamhoury.githubchallenge.R
@@ -40,9 +41,21 @@ class ReposListActivity : GithubReposActivity() {
                 }
                 is StateMonitor.Failed -> {
                     progressBarLoadingReposList.hide()
+                    showErrorMessageDialog(result.failed)
                 }
             }
         })
+    }
+
+    private fun showErrorMessageDialog(failed: Throwable) {
+        AlertDialog.Builder(this)
+            .setTitle("Error")
+            .setMessage(failed.message)
+            .setCancelable(false)
+            .setPositiveButton("Retry") { _, _ ->
+                reposListViewModel.loadRepositories()
+            }
+            .show()
     }
 
     override fun setupViews() {

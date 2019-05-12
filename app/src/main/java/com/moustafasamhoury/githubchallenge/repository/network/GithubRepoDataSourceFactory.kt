@@ -17,28 +17,23 @@ import com.moustafasamhoury.githubchallenge.models.GithubRepo
  */
 class GithubRepoDataSourceFactory(
     private val service: RetrofitGithubService,
-    private val createdAfterDate: String
+    private val createdAfterDate: String,
+    private val networkState: MutableLiveData<NetworkState>
 ) : DataSource.Factory<Int, GithubRepo>() {
-    private lateinit var networkState: MutableLiveData<NetworkState>
-
-
-    val networkStateLiveData
-        get() = networkState
-
     init {
         create()
     }
 
     override fun create(): DataSource<Int, GithubRepo> {
-        val source = GithubRepoDataSource(service, createdAfterDate)
-        networkState = source.networkState
+        val source = GithubRepoDataSource(service, createdAfterDate, networkState)
         return source
     }
 
     companion object {
         fun create(
-            service: RetrofitGithubService, createdAfterDate: String
+            service: RetrofitGithubService, createdAfterDate: String,
+            errorsLiveData: MutableLiveData<NetworkState>
         ) =
-            GithubRepoDataSourceFactory(service, createdAfterDate)
+            GithubRepoDataSourceFactory(service, createdAfterDate, errorsLiveData)
     }
 }

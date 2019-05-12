@@ -14,9 +14,10 @@ import io.reactivex.schedulers.Schedulers
  * created on Saturday, 11 May, 2019
  */
 
-public class GithubRepoDataSource(
+class GithubRepoDataSource(
     private val retrofitGithubService: RetrofitGithubService,
-    private val createdAfterDate: String
+    private val createdAfterDate: String,
+    private val networkState: MutableLiveData<NetworkState>
 ) :
     PageKeyedDataSource<Int, GithubRepo>() {
     companion object {
@@ -25,12 +26,6 @@ public class GithubRepoDataSource(
 
     // keep a function reference for the retry event
     private var retry: (() -> Any)? = null
-
-    /**
-     * There is no sync on the state because paging will always call loadInitial first then wait
-     * for it to return some success value before calling loadAfter.
-     */
-    val networkState = MutableLiveData<NetworkState>()
 
 
     fun retryAllFailed() {
@@ -41,12 +36,12 @@ public class GithubRepoDataSource(
 
     @SuppressLint("CheckResult")
     override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, GithubRepo>) {
-        if (networkState.value == NetworkState.LOADING) {
-            Log.d(TAG,"tried to load in loadInitial multiple times")
+        if (networkState.value == NetworkState.Loading) {
+            Log.d(TAG, "tried to load in loadInitial multiple times")
             return
         }
 
-        networkState.postValue(NetworkState.LOADING)
+        networkState.postValue(NetworkState.Loading)
 
         retrofitGithubService.topGithubRepositories(
             createdAfterDate = createdAfterDate,
@@ -55,7 +50,7 @@ public class GithubRepoDataSource(
         ).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                networkState.postValue(NetworkState.LOADED)
+                networkState.postValue(NetworkState.Loaded)
                 retry = null
 
                 when (val response = it) {
@@ -74,29 +69,17 @@ public class GithubRepoDataSource(
                         }
                         val errors = response.body
                             ?.joinErrors()
-                        networkState.postValue(NetworkState.error(errors))
 
-//                        networkState.postValue(PaginationNetworkState.Error(errors ?: "unknown error"))
+                        networkState.postValue(NetworkState.Error(Throwable(errors ?: "unknown error")))
                     }
                     is NetworkResponse.NetworkError -> {
                         val throwable = response.error
-//                        retry = {
-//                            loadInitial(params, callback)
-//                        }
-                        val error = NetworkState.error(throwable.toString())
-                        networkState.postValue(error)
-
-//                        networkState.postValue(PaginationNetworkState.Error(throwable.toString()))
+                        networkState.postValue(NetworkState.Error(throwable))
 
                     }
                 }
             }, {
-                //                retry = {
-//                    loadInitial(params, callback)
-//                }
-                val error = NetworkState.error(it.message ?: "unknown error")
-                networkState.postValue(error)
-//                networkState.postValue(PaginationNetworkState.Error(it.toString()))
+                networkState.postValue(NetworkState.Error(it))
 
             })
 
@@ -105,12 +88,12 @@ public class GithubRepoDataSource(
 
     @SuppressLint("CheckResult")
     override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, GithubRepo>) {
-        if (networkState.value == NetworkState.LOADING) {
-            Log.d(TAG,"tried to load in loadAfter multiple times")
+        if (networkState.value == NetworkState.Loading) {
+            Log.d(TAG, "tried to load in loadAfter multiple times")
             return
         }
 
-        networkState.postValue(NetworkState.LOADING)
+        networkState.postValue(NetworkState.Loading)
 
         retrofitGithubService.topGithubRepositories(
             createdAfterDate = createdAfterDate,
@@ -119,7 +102,7 @@ public class GithubRepoDataSource(
         ).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                networkState.postValue(NetworkState.LOADED)
+                networkState.postValue(NetworkState.Loaded)
                 retry = null
 
                 when (val response = it) {
@@ -132,10 +115,7 @@ public class GithubRepoDataSource(
                     is NetworkResponse.ServerError -> {
                         val errors = response.body
                             ?.joinErrors()
-//                        retry = {
-//                            loadAfter(params, callback)
-//                        }
-                        networkState.postValue(NetworkState.error(it.toString()))
+                        networkState.postValue(NetworkState.Error(Throwable(errors ?: "unknown error")))
 
                     }
                     is NetworkResponse.NetworkError -> {
@@ -143,16 +123,11 @@ public class GithubRepoDataSource(
                         retry = {
                             loadAfter(params, callback)
                         }
-                        val error = NetworkState.error(throwable.message ?: "unknown error")
-                        networkState.postValue(error)
-
+                        networkState.postValue(NetworkState.Error(throwable))
                     }
                 }
             }, {
-                //                retry = {
-//                    loadAfter(params, callback)
-//                }
-                networkState.postValue(NetworkState.error(it.toString()))
+                networkState.postValue(NetworkState.Error(it))
 
             })
 
