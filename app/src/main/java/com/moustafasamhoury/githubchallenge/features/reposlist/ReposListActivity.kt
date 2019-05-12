@@ -1,8 +1,10 @@
 package com.moustafasamhoury.githubchallenge.features.reposlist
 
-import android.os.Bundle
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.moustafasamhoury.githubchallenge.R
 import com.moustafasamhoury.githubchallenge.base.ui.GithubReposActivity
+import com.moustafasamhoury.githubchallenge.repository.network.StateMonitor
 import kotlinx.android.synthetic.main.activity_repos_list.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -16,18 +18,36 @@ class ReposListActivity : GithubReposActivity() {
 
     private val reposListViewModel: ReposListViewModel by viewModel()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    private val reposListAdapter: ReposListAdapter by lazy {
+        ReposListAdapter()
     }
+
 
     override fun onStart() {
         super.onStart()
         reposListViewModel.loadRepositories()
+        reposListViewModel.stateLiveData.observe(this, Observer {
+            when (val result = it.githubRepositories) {
+                StateMonitor.Loading -> {
+                    progressBarLoadingReposList.show()
+                }
+                StateMonitor.Init -> {
+                    progressBarLoadingReposList.hide()
+                }
+                is StateMonitor.Loaded -> {
+                    progressBarLoadingReposList.hide()
+                    reposListAdapter.submitList(result.result)
+                }
+                is StateMonitor.Failed -> {
+                    progressBarLoadingReposList.hide()
+                }
+            }
+        })
     }
 
     override fun setupViews() {
-
+        recyclerViewReposList.layoutManager = LinearLayoutManager(this)
+        recyclerViewReposList.adapter = reposListAdapter
     }
 
     override fun cleanupResources() {
