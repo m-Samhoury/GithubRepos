@@ -13,7 +13,8 @@ data class GithubErrorResponse(
     @field:Json(name = "message") val message: String? = null,
     @field:Json(name = "errors") val githubErrors: List<GithubErrorObject> = listOf()
 ) {
-    fun joinErrors() = githubErrors.joinToString(", ") { it.toString() }
+    fun joinErrors() = if (githubErrors.isNotEmpty()) githubErrors.joinToString(", ") { it.toString() }
+    else message
 }
 
 @JsonClass(generateAdapter = true)
