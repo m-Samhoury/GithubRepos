@@ -1,5 +1,6 @@
 package com.moustafasamhoury.githubchallenge.base
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -25,4 +26,11 @@ abstract class GithubReposViewModel(protected val compositeDisposable: Composite
         compositeDisposable.clear()
         super.onCleared()
     }
+
+
+    protected fun Disposable.disposeOnClear(): Disposable {
+        compositeDisposable.add(this)
+        return this
+    }
+
 }
