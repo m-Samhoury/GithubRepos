@@ -8,7 +8,7 @@ package com.moustafasamhoury.githubchallenge.repository.network
 sealed class NetworkState {
     object Loading : NetworkState()
     object Loaded : NetworkState()
-    data class Error(val throwable: Throwable) : NetworkState()
+    data class Error(val throwable: Throwable, val errorAction:(() -> Any)? = null) : NetworkState()
 }
 
 

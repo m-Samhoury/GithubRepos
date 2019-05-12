@@ -41,19 +41,20 @@ class ReposListActivity : GithubReposActivity() {
                 }
                 is StateMonitor.Failed -> {
                     progressBarLoadingReposList.hide()
-                    showErrorMessageDialog(result.failed)
+                    showErrorMessageDialog(result.failed, result.action)
                 }
             }
         })
     }
 
-    private fun showErrorMessageDialog(failed: Throwable) {
+    private fun showErrorMessageDialog(failed: Throwable, action: (() -> Any)?) {
         AlertDialog.Builder(this)
             .setTitle("Error")
             .setMessage(failed.message)
             .setCancelable(false)
             .setPositiveButton("Retry") { _, _ ->
-                reposListViewModel.loadRepositories()
+                if (action != null) action()
+                else reposListViewModel.loadRepositories()
             }
             .show()
     }

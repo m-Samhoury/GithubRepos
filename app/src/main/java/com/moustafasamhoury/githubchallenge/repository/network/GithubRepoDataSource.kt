@@ -70,16 +70,22 @@ class GithubRepoDataSource(
                         val errors = response.body
                             ?.joinErrors()
 
-                        networkState.postValue(NetworkState.Error(Throwable(errors ?: "unknown error")))
+                        networkState.postValue(NetworkState.Error(Throwable(errors ?: "unknown error"), retry))
                     }
                     is NetworkResponse.NetworkError -> {
+                        retry = {
+                            loadInitial(params, callback)
+                        }
                         val throwable = response.error
-                        networkState.postValue(NetworkState.Error(throwable))
+                        networkState.postValue(NetworkState.Error(throwable, retry))
 
                     }
                 }
             }, {
-                networkState.postValue(NetworkState.Error(it))
+                retry = {
+                    loadInitial(params, callback)
+                }
+                networkState.postValue(NetworkState.Error(it, retry))
 
             })
 
@@ -113,9 +119,12 @@ class GithubRepoDataSource(
                         )
                     }
                     is NetworkResponse.ServerError -> {
+                        retry = {
+                            loadAfter(params, callback)
+                        }
                         val errors = response.body
                             ?.joinErrors()
-                        networkState.postValue(NetworkState.Error(Throwable(errors ?: "unknown error")))
+                        networkState.postValue(NetworkState.Error(Throwable(errors ?: "unknown error"), retry))
 
                     }
                     is NetworkResponse.NetworkError -> {
@@ -123,11 +132,14 @@ class GithubRepoDataSource(
                         retry = {
                             loadAfter(params, callback)
                         }
-                        networkState.postValue(NetworkState.Error(throwable))
+                        networkState.postValue(NetworkState.Error(throwable, retry))
                     }
                 }
             }, {
-                networkState.postValue(NetworkState.Error(it))
+                retry = {
+                    loadAfter(params, callback)
+                }
+                networkState.postValue(NetworkState.Error(it, retry))
 
             })
 

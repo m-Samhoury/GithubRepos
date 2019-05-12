@@ -31,7 +31,14 @@ class ReposListViewModel(private val repository: Repository) : GithubReposViewMo
                     stateLiveData.postValue(state)
                 }
                 is NetworkState.Error -> {
-                    stateLiveData.postValue(state.copy(githubRepositories = StateMonitor.Failed(it.throwable)))
+                    stateLiveData.postValue(
+                        state.copy(
+                            githubRepositories = StateMonitor.Failed(
+                                it.throwable,
+                                it.errorAction
+                            )
+                        )
+                    )
                 }
             }
         })

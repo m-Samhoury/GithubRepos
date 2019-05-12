@@ -10,5 +10,5 @@ sealed class StateMonitor<out T> {
     object Loading : StateMonitor<Nothing>()
     object Init : StateMonitor<Nothing>()
     data class Loaded<T>(val result: T) : StateMonitor<T>()
-    data class Failed(val failed: Throwable) : StateMonitor<Nothing>()
+    data class Failed(val failed: Throwable, val action: (() -> Any)? = null) : StateMonitor<Nothing>()
 }
