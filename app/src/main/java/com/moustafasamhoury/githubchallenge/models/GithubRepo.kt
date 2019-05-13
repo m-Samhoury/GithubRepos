@@ -35,8 +35,15 @@ data class GithubRepo(
     @field:Json(name = "language") val programmingLanguage: String? = null,
     @field:Json(name = "description") val description: String? = null,
     @field:Json(name = "watchers_count") val starsCount: String? = null,
-    @field:Json(name = "forks_count") val forks: Int
+    @field:Json(name = "forks_count") val forks: Int,
+    @field:Json(name = "owner") val owner: RepoOwner
 
+)
+
+@JsonClass(generateAdapter = true)
+data class RepoOwner(
+    @field:Json(name = "login") val username: String? = null,
+    @field:Json(name = "avatar_url") val avatarUrl: String? = null
 )
 
 @JsonClass(generateAdapter = true)
