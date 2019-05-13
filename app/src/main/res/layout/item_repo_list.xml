@@ -59,7 +59,12 @@
     <TextView
             app:layout_constraintStart_toEndOf="@id/imageViewOwnerAvatar"
             android:id="@+id/textViewOwnerName"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            app:layout_constraintEnd_toStartOf="@id/textViewStarsCount"
+            android:layout_marginEnd="5dp"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textColor="@color/black"
             android:layout_marginStart="8dp"
             tools:text="Jake Wharton"
             app:layout_constraintBottom_toBottomOf="@id/imageViewOwnerAvatar"
