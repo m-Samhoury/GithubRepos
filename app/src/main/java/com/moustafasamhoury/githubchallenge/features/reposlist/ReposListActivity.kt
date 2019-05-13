@@ -2,10 +2,12 @@ package com.moustafasamhoury.githubchallenge.features.reposlist
 
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.moustafasamhoury.githubchallenge.R
 import com.moustafasamhoury.githubchallenge.base.ui.GithubReposActivity
 import com.moustafasamhoury.githubchallenge.repository.network.StateMonitor
+import com.moustafasamhoury.githubchallenge.utils.ItemDecorationCustomMargins
 import kotlinx.android.synthetic.main.activity_repos_list.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -62,6 +64,8 @@ class ReposListActivity : GithubReposActivity() {
     override fun setupViews() {
         recyclerViewReposList.layoutManager = LinearLayoutManager(this)
         recyclerViewReposList.adapter = reposListAdapter
+        recyclerViewReposList.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+        recyclerViewReposList.addItemDecoration(ItemDecorationCustomMargins(bottom = 8))
     }
 
     override fun cleanupResources() {
