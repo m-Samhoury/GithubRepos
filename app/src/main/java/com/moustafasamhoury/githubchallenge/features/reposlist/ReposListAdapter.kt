@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.moustafasamhoury.githubchallenge.R
 import com.moustafasamhoury.githubchallenge.models.GithubRepo
+import com.moustafasamhoury.githubchallenge.utils.GlideApp
 import kotlinx.android.synthetic.main.item_repo_list.view.*
 import kotlinx.android.synthetic.main.item_repo_with_shimmer.view.*
 
@@ -63,6 +64,13 @@ class ReposListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             }
 
             itemView.rootFrameLayout.textViewStarsCount.text = githubRepo.starsCount
+
+            GlideApp.with(itemView.context)
+                .load(githubRepo.owner.avatarUrl)
+                .placeholder(R.drawable.ic_repo_placeholder)
+                .circleCrop()
+                .into(itemView.rootFrameLayout.imageViewOwnerAvatar)
+            itemView.rootFrameLayout.textViewOwnerName.text = githubRepo.owner.username
         } else {
             itemView.rootFrameLayout.visibility = View.GONE
             itemView.shimmerLayout.visibility = View.VISIBLE

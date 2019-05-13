@@ -37,13 +37,34 @@
             android:id="@+id/textViewStarsCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:drawableStart="@drawable/ic_star"
             android:gravity="center"
             android:textAlignment="center"
             app:layout_constraintEnd_toEndOf="@id/textViewDescription"
-            app:layout_constraintTop_toBottomOf="@id/textViewDescription"
+            app:layout_constraintBottom_toBottomOf="@id/imageViewOwnerAvatar"
+            app:layout_constraintTop_toTopOf="@id/imageViewOwnerAvatar"
             tools:text="5.1K"/>
+
+    <ImageView
+            android:contentDescription="@string/content_description_user_avatar"
+            android:id="@+id/imageViewOwnerAvatar"
+            android:layout_width="50dp"
+            android:layout_marginTop="16dp"
+            tools:background="@color/colorPrimary"
+            app:layout_constraintStart_toStartOf="@id/textViewName"
+            app:layout_constraintBottom_toTopOf="@id/imageViewOwnerAvatar"
+            app:layout_constraintTop_toBottomOf="@id/textViewDescription"
+            android:layout_height="50dp"/>
+
+    <TextView
+            app:layout_constraintStart_toEndOf="@id/imageViewOwnerAvatar"
+            android:id="@+id/textViewOwnerName"
+            android:layout_width="wrap_content"
+            android:layout_marginStart="8dp"
+            tools:text="Jake Wharton"
+            app:layout_constraintBottom_toBottomOf="@id/imageViewOwnerAvatar"
+            app:layout_constraintTop_toTopOf="@id/imageViewOwnerAvatar"
+            android:layout_height="wrap_content"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
