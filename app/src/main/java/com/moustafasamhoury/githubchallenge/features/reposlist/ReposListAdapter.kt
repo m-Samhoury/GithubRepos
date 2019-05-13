@@ -1,5 +1,6 @@
 package com.moustafasamhoury.githubchallenge.features.reposlist
 
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,8 +50,18 @@ class ReposListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             itemView.rootFrameLayout.visibility = View.VISIBLE
             itemView.shimmerLayout.visibility = View.GONE
 
+
             itemView.rootFrameLayout.textViewName.text = githubRepo.name
-            itemView.rootFrameLayout.textViewDescription.text = githubRepo.description
+
+
+            //Description may be empty
+            if (TextUtils.isEmpty(githubRepo.description)) {
+                itemView.rootFrameLayout.textViewDescription.visibility = View.GONE
+            } else {
+                itemView.rootFrameLayout.textViewDescription.visibility = View.VISIBLE
+                itemView.rootFrameLayout.textViewDescription.text = githubRepo.description
+            }
+
             itemView.rootFrameLayout.textViewStarsCount.text = githubRepo.starsCount
         } else {
             itemView.rootFrameLayout.visibility = View.GONE

@@ -31,7 +31,7 @@ data class GithubErrorObject(
 @JsonClass(generateAdapter = true)
 data class GithubRepo(
     @field:Json(name = "id") val id: Long,
-    @field:Json(name = "items") val name: String? = null,
+    @field:Json(name = "name") val name: String? = null,
     @field:Json(name = "language") val programmingLanguage: String? = null,
     @field:Json(name = "description") val description: String? = null,
     @field:Json(name = "watchers_count") val starsCount: String? = null,
