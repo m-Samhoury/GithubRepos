@@ -46,6 +46,8 @@ class ReposListViewModel(private val repository: Repository) : GithubReposViewMo
 
 
     fun loadRepositories() {
+        stateLiveData.postValue(state.copy(githubRepositories = StateMonitor.Loading))
+
         val observable =
             repository.fetchTopGithubRepositoriesPaginated(
                 createdAfterDate =
