@@ -16,17 +16,16 @@ import org.koin.dsl.module
  */
 
 val repositoryModule: Module = module {
+    single { RetrofitWebServiceFactory.makeHttpClient(androidContext()) }
 
-    single<RetrofitGithubService> {
-        RetrofitWebServiceFactory.makeServiceFactory(
-            RetrofitWebServiceFactory.makeHttpClient(androidContext()), BuildConfig.BASE_API_URL
-        )
-    }
-
+    single<RetrofitGithubService> { RetrofitWebServiceFactory.makeServiceFactory(get()) }
+    single { RetrofitWebServiceFactory.makeRetrofit(BuildConfig.BASE_API_URL, get()) }
     single { Repository(get()) }
 
 }
 
 val viewModelsModule = module {
-    viewModel { ReposListViewModel(get()) }
+    viewModel {
+        ReposListViewModel(repository = get())
+    }
 }

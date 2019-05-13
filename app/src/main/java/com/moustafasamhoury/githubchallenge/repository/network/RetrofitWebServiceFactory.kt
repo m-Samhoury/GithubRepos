@@ -3,7 +3,8 @@ package com.moustafasamhoury.githubchallenge.repository.network
 import android.content.Context
 import com.moustafasamhoury.githubchallenge.models.GithubErrorResponse
 import com.moustafasamhoury.githubchallenge.models.GithubRepo
-import com.moustafasamhoury.githubchallenge.utils.RxCallAdapterWrapperFactory
+import com.moustafasamhoury.githubchallenge.utils.KotlinRxJava2CallAdapterFactory
+import com.readystatesoftware.chuck.ChuckInterceptor
 import com.squareup.moshi.Moshi
 import okhttp3.Cache
 import okhttp3.CertificatePinner
@@ -25,6 +26,7 @@ object RetrofitWebServiceFactory {
 
     fun makeHttpClient(context: Context): OkHttpClient =
         makeHttpClientBuilder(context)
+            .addInterceptor(ChuckInterceptor(context))
             .build()
 
     fun makeHttpClientBuilder(context: Context): OkHttpClient.Builder =
@@ -46,19 +48,19 @@ object RetrofitWebServiceFactory {
 
 
     inline fun <reified T> makeServiceFactory(
-        okHttpClient: OkHttpClient,
-        baseUrl: String
-    ): T {
+        retrofit: Retrofit
+    ): T = retrofit.create(T::class.java)
 
+
+    fun makeRetrofit(baseUrl: String, okHttpClient: OkHttpClient): Retrofit {
         val retrofit = Retrofit.Builder()
             .baseUrl(baseUrl)
             .client(okHttpClient)
-            .addCallAdapterFactory(RxCallAdapterWrapperFactory.create())
+            .addCallAdapterFactory(KotlinRxJava2CallAdapterFactory.create())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(MoshiConverterFactory.create(createMoshiInstance()))
             .build()
-        return retrofit.create(T::class.java)
-
+        return retrofit
     }
 
 }
