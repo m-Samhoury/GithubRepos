@@ -2,7 +2,7 @@
 
 #### This sample was created to showcase my skills in the Android Framework.
 
-In the company I work at, we use MVP architecture, dagger2, and no use of livedata and other components. 
+In the company I work at, we use MVP architecture, dagger2, GSON, and no use of livedata and other components. 
 I decided in this project to make use of the jetpack libraries, especially that almost all of them are now stable.
 
 I used the **MVVM** architecture with a flavor of state machine approach inorder to render the UI according to the 
@@ -14,6 +14,8 @@ Second, I used the ViewModel component, which is very nifty library IMHO
 
 Also, I opted out to use the paging library from jetpack to experiment with it. Its approach is really neat. 
 The result is amazing (check below the gif) 
+
+I decided to go with Moshi this time instead of GSON for serializing/deserializing kotlin models into and from json, as its – as the core maintainers say – GSON 3.0 but without backward support. It is created by the same people who created GSON. I was pretty satisfied with it, especially with the newly added codegen feature.
 
 
 
